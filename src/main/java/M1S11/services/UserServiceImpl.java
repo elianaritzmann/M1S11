@@ -1,0 +1,65 @@
+package M1S11.services;
+
+import M1S11.Mapper.UserMapper;
+import M1S11.dtos.UserRequestDto;
+import M1S11.dtos.UserResponseDto;
+import M1S11.entities.UserEntity;
+import M1S11.repositories.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class UserServiceImpl implements UserService{
+
+    private final PasswordEncoder encoder;
+    private final UserRepository repository;
+
+
+    public List<UserResponseDto> findAll() {
+        List<UserEntity> user = repository.findAll();
+        return user.stream().map(UserMapper::responseDto).toList();
+
+    }
+
+    public UserResponseDto findById(Long id) {
+        UserEntity user = repository.findById(id).orElseThrow();
+        if (user != null){
+            return UserMapper.responseDto(user);
+        }
+
+        return null;
+    }
+
+
+    public UserResponseDto create(UserRequestDto dto) {
+        UserEntity user = new UserEntity();
+        UserMapper.toEntity(user, dto);
+        user.setPassword(encoder.encode(dto.password()));
+        user = repository.save(user);
+        return UserMapper.responseDto(user);
+    }
+
+    public UserResponseDto update(Long id, UserRequestDto dto) {
+        UserEntity user = repository.findById(id).orElseThrow();
+        UserMapper.toEntity(user, dto);
+        user.setPassword(encoder.encode(dto.password()));
+
+        user = repository.save(user);
+        return UserMapper.responseDto(user);
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return repository.findByUsername(username).orElseThrow();
+    }
+}
