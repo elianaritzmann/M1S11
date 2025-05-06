@@ -44,7 +44,9 @@ public class LoginServiceImpl implements LoginService{
             throw new BadCredentialsException("Invalid username or password");
         }
 
-        String token = jwtConfig.generateToken(dto.getUsername());
+        UserEntity user = (UserEntity)authentication.getPrincipal();
+
+        String token = jwtConfig.generateToken(user);
         return LoginResponseDto.builder().type("Bearer").token(token).build();
     }
 

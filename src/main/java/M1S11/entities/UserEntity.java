@@ -2,16 +2,14 @@ package M1S11.entities;
 
 import M1S11.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jdk.jshell.Snippet;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-
+@Builder
 @Entity
 @Setter
 @Getter
@@ -35,6 +33,7 @@ public class UserEntity implements UserDetails {
 
     @Column
     private UserStatus profile = UserStatus.USER;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

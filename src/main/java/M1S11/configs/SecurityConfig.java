@@ -51,7 +51,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login").permitAll()
+                      //  .requestMatchers("/login").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority(UserStatus.ADMIN.name())
                         .requestMatchers(HttpMethod.POST,"/organizations/**").hasAuthority(UserStatus.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE,"/organizations/**").hasAuthority(UserStatus.ADMIN.name())

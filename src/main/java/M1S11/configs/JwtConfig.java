@@ -1,5 +1,6 @@
 package M1S11.configs;
 
+import M1S11.entities.UserEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,11 +23,13 @@ public class JwtConfig {
             return Keys.hmacShaKeyFor(keyBytes);
         }
 
-    public String generateToken(String username) {
+    public String generateToken(UserEntity user) {
         return Jwts.builder()
-                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // -> 10 horas
+                .claim("id", user.getId())
+                .claim("username",user.getUsername())
+                .claim("profile",user.getProfile())
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

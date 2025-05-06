@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
-@RequiredArgsConstructor
 public class LoginResponseDto{
        private String type;
        private String token;

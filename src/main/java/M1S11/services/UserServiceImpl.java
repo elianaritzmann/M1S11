@@ -4,6 +4,7 @@ import M1S11.Mapper.UserMapper;
 import M1S11.dtos.UserRequestDto;
 import M1S11.dtos.UserResponseDto;
 import M1S11.entities.UserEntity;
+import M1S11.enums.UserStatus;
 import M1S11.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,11 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService{
 
+
+    private static final String DEFAULT_USER = "root";
+    private static final String DEFAULT_PASSWORD ="admin";
     private final PasswordEncoder encoder;
     private final UserRepository repository;
 
@@ -60,6 +65,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsername(username).orElseThrow();
+        Optional<UserEntity> user = repository.findByUsername(username);
+        if(user.isPresent()){
+            return user.get();
+        }
+        if (username.equals(DEFAULT_USER)){
+            return UserEntity.builder().id(0L).username("root").password(encoder.encode(DEFAULT_PASSWORD)).profile(UserStatus.ADMIN).build();
+        }
+        throw new UsernameNotFoundException(username);
     }
 }
